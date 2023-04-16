@@ -17,7 +17,7 @@ class SudokuStateCheckResults:
         self.rows = []
         self.cols = []
         self.is_valid = True
-        self.error_message = ""
+        self.message = ""
 
 
 class RuleBasedSudokuStateChecker(StateCheckerBase):
@@ -40,7 +40,7 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         # Check constraint 1: the current board must have the same size as the initial board
         if (current_board.shape[0] != init_board.shape[0]) or (current_board.shape[1] != init_board.shape[1]):
             result.is_valid = False
-            result.error_message = "The current Sudoku board has a size different than the original board."
+            result.message = "The current Sudoku board has a size different than the original board."
             return result
 
         # Check constraint 2: the board must be filled with numbers from 1-n with no repeated numbers in each line, horizontally or vertically.
@@ -49,8 +49,8 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
             has_duplicates, duplicated_elem = self._has_duplicates(row)
             if has_duplicates:
                 result.is_valid = False
-                err_msg_tmpl = "Row {} is invalid, it contains two {}s."
-                result.error_message = err_msg_tmpl.format(row, duplicated_elem)
+                msg_tmpl = "Row {} is invalid, it contains two {}s."
+                result.message = msg_tmpl.format(row, duplicated_elem)
                 return result
         
         for j in range(len(result.cols)):
@@ -58,8 +58,8 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
             has_duplicates, duplicated_elem = self._has_duplicates(col)
             if has_duplicates:
                 result.is_valid = False
-                err_msg_tmpl = "Column {} is invalid, it contains two {}s."
-                result.error_message = err_msg_tmpl.format(col, duplicated_elem)
+                msg_tmpl = "Column {} is invalid, it contains two {}s."
+                result.message = msg_tmpl.format(col, duplicated_elem)
                 return result
             
         # Check constraint 3: the current board should not overwrite the cells that are already filled before puzzle solving
@@ -67,10 +67,14 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
             for j in range(init_board.shape[1]):
                 if (init_board[i][j] != consts.SUDOKU_UNFILLED_CELLS_PLACEHOLDER and init_board[i][j] != current_board[i][j]):
                     result.is_valid = False
-                    err_msg_tmpl = "Cell [{}][{}] is invalid. The corresponding cell has been filled with {} initially. We cannot set it to a different number."
-                    result.error_message = err_msg_tmpl.format(i, j, init_board[i][j])
+                    msg_tmpl = "Cell [{}][{}] is invalid. The corresponding cell has been filled with {} initially. We cannot set it to a different number."
+                    result.message = msg_tmpl.format(i, j, init_board[i][j])
                     return result
         
+        # TODO: Check constraint 4: The numbers in each block are distinct
+
+        msg_tmpl = "The current board is valid. The rows are [{}], and the columns are [{}]"
+        result.message = msg_tmpl.format(str(result.rows), str(result.cols))
         return result
 
     def _has_duplicates(self, vec):

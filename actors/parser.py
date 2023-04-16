@@ -1,5 +1,5 @@
 
-class LLMParserBase(object):
+class LLMReplyParserBase(object):
 
     def __init__(self) -> None:
         pass
@@ -8,7 +8,7 @@ class LLMParserBase(object):
         pass
 
 
-class SudokuParser(LLMParserBase):
+class LLMReplyParserForSudoku(LLMReplyParserBase):
 
     def __init__(self) -> None:
         pass

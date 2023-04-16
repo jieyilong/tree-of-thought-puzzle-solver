@@ -1,6 +1,6 @@
 import common.consts as consts
 from common.enums import *
-from common.prompter import SudokuPrompter
+from actors.prompter import SudokuPrompter
 
 
 class TreeOfThought(object):
