@@ -1,4 +1,6 @@
 from state import *
+from checker import *
+from enums import PromptGenType
 
 
 class PrompterBase(object):
@@ -9,15 +11,27 @@ class PrompterBase(object):
 
 class SudokuPrompter(PrompterBase):
 
-    def __init__(self) -> None:
+    PROMPT_TEMPLATES = ["Here is a", "the rows are", "the columns are"]
+
+    def __init__(self, prompt_generation_type: PromptGenType) -> None:
         super().__init__()
-        self.state = SudokuState()
+        self.state_manager = SudokuStateManager()
+        self.checker = SudokuStateChecker(self.state_manager)
+        self.prompt_generation_type = prompt_generation_type
 
-    def generate_prompt(self) -> str:
-        pass
+    def generate_prompt(self):
+        success, prompt = False, None
+        if self.prompt_generation_type == PromptGenType.RuleBased:
+            success, prompt = self._generate_prompt_rule_based()
+        elif self.prompt_generation_type == PromptGenType.NeuralNetworkBased:
+            success, prompt = self._generate_prompt_nn_based()
+        return success, prompt
 
-    def _generate_prompt_rule_based(self) -> str:
-        pass
+    def _generate_prompt_rule_based(self):
+        valid = self.checker.check_current_state()
 
-    def _generate_prompt_nn_based(self) -> str:
-        pass
+        
+        return False, None
+
+    def _generate_prompt_nn_based(self):
+        return False, None

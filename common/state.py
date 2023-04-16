@@ -1,6 +1,6 @@
 import numpy as np
 
-class StateBase(object):
+class StateManagerBase(object):
 
     def __init__(self) -> None:
         pass
@@ -14,7 +14,7 @@ class StateBase(object):
     def rollback(self, steps) -> object:
         pass
 
-class SudokuState(StateBase):
+class SudokuStateManager(StateManagerBase):
 
     def __init__(self) -> None:
         super().__init__()
