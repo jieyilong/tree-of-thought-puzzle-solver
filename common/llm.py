@@ -35,22 +35,12 @@ class OpenAIChatbot(ChatbotBase):
         openai.api_key = self.cfg.openai_api_key
 
     def get_reply(self, messages, temperature = None, max_tokens = None) -> str:
-        if self.cfg.use_azure:
-            response = openai.ChatCompletion.create(
-                deployment_id = self.cfg.azure_chat_deployment_id,
-                model = self.model,
-                messages = messages,
-                temperature = temperature,
-                max_tokens = max_tokens
-            )
-        else:
-            response = openai.ChatCompletion.create(
-                model = self.model,
-                messages = messages,
-                temperature = temperature,
-                max_tokens = max_tokens
-            )
-
+        response = openai.ChatCompletion.create(
+            model = self.model,
+            messages = messages,
+            temperature = temperature,
+            max_tokens = max_tokens
+        )
         reply = response.choices[0].message["content"]
         return reply
 

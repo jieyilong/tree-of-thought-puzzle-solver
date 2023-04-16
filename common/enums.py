@@ -7,3 +7,7 @@ class ChatbotType(Enum):
 class PromptGenType(Enum):
     RuleBased = 1
     NeuralNetworkBased = 2
+
+class ProblemType(Enum):
+    Sudoku = 1
+    ThreeSAT = 2
