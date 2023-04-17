@@ -11,8 +11,12 @@ class StateManagerBase(object):
     def get_current_state(self) -> object:
         return None
     
-    def rollback(self, steps) -> object:
+    def get_state(self, rollback_steps) -> object:
+        return None
+    
+    def rollback(self, rollback_steps) -> object:
         pass
+
 
 class SudokuStateManager(StateManagerBase):
 
@@ -29,12 +33,15 @@ class SudokuStateManager(StateManagerBase):
         return False, None # FIXME
 
     def get_current_state(self) -> object:
-        if len(self.sudoku_matrix_history) == 0:
-            return None
-        return self.sudoku_matrix_history[-1]
+        return self.get_state(0)
     
-    def rollback(self, steps) -> bool:
+    def get_state(self, rollback_steps) -> object:
+        if len(self.sudoku_matrix_history) <= rollback_steps:
+            return None
+        return self.sudoku_matrix_history[-(rollback_steps+1)]
+    
+    def rollback(self, rollback_steps) -> bool:
         if len(self.sudoku_matrix_history) == 0:
             return False
-        for i in range(steps):
+        for i in range(rollback_steps):
             self.sudoku_matrix_history.pop()

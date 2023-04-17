@@ -8,13 +8,13 @@ class TreeOfThought(object):
     def __init__(self) -> None:
         self.llm_agent = None
 
-    def run(self, init_message, constraints, max_num_rounds) -> None:
-        problem_type = self._extract_problem_type(init_message)
+    def run(self, user_input, max_num_rounds) -> None:
+        problem_type = self._extract_problem_type(user_input)
         totExecutor = self._get_tot_executor(problem_type)
-        totExecutor.run(constraints, max_num_rounds)
+        totExecutor.run(max_num_rounds)
 
-    def _extract_problem_type(self, init_message):
-        messages = self._generate_problem_type_query(init_message)
+    def _extract_problem_type(self, user_input):
+        messages = self._generate_problem_type_query(user_input)
         temperature = consts.DEFAULT_TEMPERATURE
         max_tokens = consts.DEFAULT_MAX_TOKENS
         reply = self.llm_agent.get_reply(messages, temperature, max_tokens)
@@ -40,18 +40,22 @@ class TreeOfThoughtExecutorBase(object):
         self.parser = None
         self.prompter = None
 
-    def run(self, constraints, max_num_rounds) -> None:
-        self.llm_agent.read_constraints(constraints)
+    def run(self, max_num_rounds) -> None:
+        messages = self.prompter.generate_initial_prompt()
         for i in range(max_num_rounds):
-            messages = self.prompter.generate_prompt() # FIXME
             temperature = self._get_temperature()
             max_tokens = self._get_max_tokens()
             reply = self.llm_agent.get_reply(messages, temperature, max_tokens)
             solution = self.parser.parse_llm_reply(reply)
-            if self._validate_solution(solution):
+            self.state.update_state(solution)
+
+            rollback_steps = 1
+            curr_state_is_valid, messages = self.prompter.generate_prompt(rollback_steps) # FIXME
+            if curr_state_is_valid:
+                print("Problem solved! The final solution is {}".format(solution))
                 break
             else:
-                self.state.rollback(1) # backtracking
+                self.state.rollback(rollback_steps) # backtracking
 
     def _get_temperature(self):
         return None
