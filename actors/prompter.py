@@ -17,13 +17,14 @@ class PrompterBase(object):
 
 class SudokuPrompter(PrompterBase):
 
-    def __init__(self, prompt_generation_type: PromptGenType) -> None:
+    def __init__(self, llm_agent, prompt_generation_type: PromptGenType) -> None:
         super().__init__()
+        self.llm_agent = llm_agent
         self.state_manager = SudokuStateManager()
         self.prompt_generation_type = prompt_generation_type
 
     def generate_initial_prompt(self, user_input) -> str:
-        msg_tmpl = """Before solving this Sudoku puzzle {}, please return its initial board configuration in the following JSON format: {{ "rows": [] }}""" # FIXME
+        msg_tmpl = """{} Before solving this Sudoku puzzle, please return its initial board configuration in the following JSON format: {{ "rows": [] }}. Please use "*" to represent the missing values. Do not provide a solution yet.""" # FIXME
         role, msg_content = "user", msg_tmpl.format(user_input)
         msgs = self.llm_agent.compose_messages([role], [msg_content])
         return msgs

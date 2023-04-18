@@ -10,6 +10,7 @@ from actors.prompter import SudokuPrompter
 class TreeOfThought(object):
 
     def __init__(self, config) -> None:
+        self.config = config
         self.llm_agent = LLMAgent(config)
 
     def run(self, user_input, max_num_rounds) -> None:
@@ -48,7 +49,7 @@ class TreeOfThought(object):
 
     def _get_tot_executor(self, problem_type: ProblemType):
         if problem_type == ProblemType.Sudoku:
-            return TreeOfThoughtExecutorForSudoku()
+            return TreeOfThoughtExecutorForSudoku(self.config)
         elif problem_type == ProblemType.ThreeSAT:
             return TreeOfThoughtExecutorForThreeSAT()
         else:
@@ -84,12 +85,12 @@ class TreeOfThoughtExecutorBase(object):
 
 class TreeOfThoughtExecutorForSudoku(TreeOfThoughtExecutorBase):
 
-    def __init__(self) -> None:
+    def __init__(self, config) -> None:
         super().__init__()
         self.state = SudokuStateManager()
-        self.llm_agent = LLMAgent(ChatbotType.OpenAI)
+        self.llm_agent = LLMAgent(config)
         self.parser = LLMReplyParserForSudoku()
-        self.prompter = SudokuPrompter(PromptGenType.RuleBased)
+        self.prompter = SudokuPrompter(self.llm_agent, PromptGenType.RuleBased)
 
     def _get_temperature(self):
         return consts.DEFAULT_TEMPERATURE
@@ -102,7 +103,7 @@ class TreeOfThoughtExecutorForSudoku(TreeOfThoughtExecutorBase):
 
 
 class TreeOfThoughtExecutorForThreeSAT(TreeOfThoughtExecutorBase):
-    def __init__(self) -> None:
+    def __init__(self, config) -> None:
         super().__init__()
         self.state = None # FIXME
         self.llm_agent = None # FIXME
