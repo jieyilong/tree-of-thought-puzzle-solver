@@ -9,11 +9,14 @@ from actors.prompter import SudokuPrompter
 
 class TreeOfThought(object):
 
-    def __init__(self) -> None:
-        self.llm_agent = None
+    def __init__(self, config) -> None:
+        self.llm_agent = LLMAgent(config)
 
     def run(self, user_input, max_num_rounds) -> None:
-        problem_type = self._extract_problem_type(user_input)
+        success, problem_type = self._extract_problem_type(user_input)
+        if not success:
+            print("Failed to identify the problem type")
+            return
         totExecutor = self._get_tot_executor(problem_type)
         if totExecutor == None:
             print("Problem type not supported yet")
@@ -28,14 +31,20 @@ class TreeOfThought(object):
         success, json_obj = utils.extract_json_from_text_string(reply)
         if not success:
             return False, None
-        if not json_obj.has_key(consts.KEY_PROBLEM_TYPE):
+        if not (consts.KEY_PROBLEM_TYPE in json_obj):
             return False, None
-        problem_type = json_obj[consts.KEY_PROBLEM_TYPE]
-        return problem_type
+        try:
+            problem_type = ProblemType(json_obj[consts.KEY_PROBLEM_TYPE])
+        except:
+            return False, None
+        return True, problem_type
     
-    def _generate_problem_type_query(user_input):
-        msg_tmpl = """The user is asking "{}". What type of problem the user wants to solve? Please give the answer in the following JSON format: \{ '{}': <problem_type> \} where <problem_type> can only be "sudoku", "3sat", or "others"."""
-        return msg_tmpl.format(user_input, consts.KEY_PROBLEM_TYPE)
+    def _generate_problem_type_query(self, user_input):
+        msg_tmpl = """The user is asking "{}". What type of problem the user wants to solve? Please give the answer in the following JSON format: {{ "{}": "<problem_type>" }} where <problem_type> can only be "sudoku", "3sat", or "others"."""
+        msg_content = msg_tmpl.format(user_input, consts.KEY_PROBLEM_TYPE)
+        role = "user"
+        msgs = self.llm_agent.compose_messages([role], [msg_content])
+        return msgs
 
     def _get_tot_executor(self, problem_type: ProblemType):
         if problem_type == ProblemType.Sudoku:

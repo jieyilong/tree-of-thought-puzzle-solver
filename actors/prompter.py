@@ -1,6 +1,6 @@
-from state import *
-from checker import *
-from enums import PromptGenType
+from actors.state import *
+from actors.checker import *
+from common.enums import PromptGenType
 
 
 class PrompterBase(object):
@@ -23,8 +23,10 @@ class SudokuPrompter(PrompterBase):
         self.prompt_generation_type = prompt_generation_type
 
     def generate_initial_prompt(self, user_input) -> str:
-        msg_tmpl = """Before solving this Sudoku puzzle {}, please return its initial board configuration in the following JSON format: \{ "rows": [] \}""" # FIXME
-        return msg_tmpl.format(user_input)
+        msg_tmpl = """Before solving this Sudoku puzzle {}, please return its initial board configuration in the following JSON format: {{ "rows": [] }}""" # FIXME
+        role, msg_content = "user", msg_tmpl.format(user_input)
+        msgs = self.llm_agent.compose_messages([role], [msg_content])
+        return msgs
     
     def generate_prompt(self, rollback_steps) -> str:
         prompt = ""
@@ -42,10 +44,12 @@ class SudokuPrompter(PrompterBase):
 
         if state_check_result.is_valid:
             msg_tmpl = "Great job! The current Sudoku board is valid. The rows are [{}], and the columns are [{}]. Please continue to fill in missing the elements following the Sudoku rules."
-            return msg_tmpl.format(state_check_result.rows, state_check_result.cols)
+            role, msg_content = "user", msg_tmpl.format(state_check_result.rows, state_check_result.cols)
         else:
             msg_tmpl = "Unfortunately there is an error in the current Sudoku board. {} Let us rewind to the previous state {} and try again."
-            return msg_tmpl.format(state_check_result.message, self.state_manager.get_state(rollback_steps))
+            role, msg_content = "user", msg_tmpl.format(state_check_result.message, self.state_manager.get_state(rollback_steps))
+        msgs = self.llm_agent.compose_messages([role], [msg_content])
+        return msgs
         
     def _generate_prompt_neural_network_based(self, rollback_steps):
         self.checker = LLMBasedSudokuStateChecker(self.state_manager)

@@ -9,3 +9,8 @@ Install the required dependencies (Python 3.9+ required):
 pip install -r requirements.txt
 ```
 
+## Run
+
+```shell
+python main.py
+```

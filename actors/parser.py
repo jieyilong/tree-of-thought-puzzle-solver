@@ -22,7 +22,7 @@ class LLMReplyParserForSudoku(LLMReplyParserBase):
         if not success:
             return False, None
         
-        if not json_obj.has_key(consts.KEY_ROWS):
+        if not (consts.KEY_ROWS in json_obj):
             return False, None
         
         rows = json_obj[consts.KEY_ROWS]

@@ -2,6 +2,7 @@
 from enum import Enum
 
 class ChatbotType(Enum):
+    Invalid = 0
     OpenAI = 1
 
 class PromptGenType(Enum):
@@ -9,5 +10,5 @@ class PromptGenType(Enum):
     NeuralNetworkBased = 2
 
 class ProblemType(Enum):
-    Sudoku = 1
-    ThreeSAT = 2
+    Sudoku = "sudoku"
+    ThreeSAT = "3sat"
