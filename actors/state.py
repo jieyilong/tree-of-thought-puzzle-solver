@@ -24,13 +24,8 @@ class SudokuStateManager(StateManagerBase):
         super().__init__()
         self.sudoku_matrix_history = []
 
-    def update_state(self, state_update_instructions) -> bool:
-        success, board_matrix = self._extract_sudoku_board(state_update_instructions)
-        if success:
-            self.sudoku_matrix_history.append(board_matrix)
-
-    def _extract_sudoku_board(self, state_update_instructions):
-        return False, None # FIXME
+    def update_state(self, solution) -> bool:
+        self.sudoku_matrix_history.append(solution)
 
     def get_current_state(self) -> object:
         return self.get_state(0)

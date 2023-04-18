@@ -22,8 +22,9 @@ class SudokuPrompter(PrompterBase):
         self.state_manager = SudokuStateManager()
         self.prompt_generation_type = prompt_generation_type
 
-    def generate_initial_prompt(self) -> str:
-        return "Before solving this Sudoku puzzle, please return its initial board configuration in the following format: \{ 'rows': [] \}" # FIXME
+    def generate_initial_prompt(self, user_input) -> str:
+        msg_tmpl = """Before solving this Sudoku puzzle {}, please return its initial board configuration in the following JSON format: \{ "rows": [] \}""" # FIXME
+        return msg_tmpl.format(user_input)
     
     def generate_prompt(self, rollback_steps) -> str:
         prompt = ""

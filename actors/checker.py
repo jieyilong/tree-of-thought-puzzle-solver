@@ -38,7 +38,8 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
             result.cols.append(col)
 
         # Check constraint 1: the current board must have the same size as the initial board
-        if (current_board.shape[0] != init_board.shape[0]) or (current_board.shape[1] != init_board.shape[1]):
+        board_size = init_board.shape[0]
+        if (current_board.shape[0] != board_size) or (current_board.shape[1] != board_size):
             result.is_valid = False
             result.message = "The current Sudoku board has a size different than the original board."
             return result
@@ -62,9 +63,16 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
                 result.message = msg_tmpl.format(col, duplicated_elem)
                 return result
             
-        # Check constraint 3: the current board should not overwrite the cells that are already filled before puzzle solving
-        for i in range(init_board.shape[0]):
-            for j in range(init_board.shape[1]):
+        # Check constraint 3: the current board should not overwrite the cells that are already filled before puzzle solving, or has invalid content
+        valid_content = [str(i+1) for i in range(board_size)]
+        valid_content.append(consts.SUDOKU_UNFILLED_CELLS_PLACEHOLDER)
+        for i in range(board_size):
+            for j in range(board_size):
+                if not init_board[i][j] in valid_content:
+                    result.is_valid = False
+                    msg_tmpl = "Cell [{}][{}] contains an invalid character. It should be either the string representation of a number between 1 to {}, or '*'"
+                    result.message = msg_tmpl.format(i, j, board_size)
+                    return result            
                 if (init_board[i][j] != consts.SUDOKU_UNFILLED_CELLS_PLACEHOLDER and init_board[i][j] != current_board[i][j]):
                     result.is_valid = False
                     msg_tmpl = "Cell [{}][{}] is invalid. The corresponding cell has been filled with {} initially. We cannot set it to a different number."
@@ -85,8 +93,7 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         for i in range(len(v) - 1):
             if v[i] == v[i+1]:
                 return True, v[i]
-        return False, None
-        
+        return False, None        
     
 class LLMBasedSudokuStateChecker(StateCheckerBase):
     def __init__(self, state_manager) -> None:
