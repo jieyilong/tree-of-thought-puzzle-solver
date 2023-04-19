@@ -8,8 +8,13 @@ if __name__ == "__main__":
     tot = TreeOfThought(config)
 
     # Solution: [[1, 4, 3, 2], [3, 1, 2, 4], [4, 2, 1, 3], [2, 3, 4, 1]]
-    user_input = "Please solve this 4x4 Sudoku puzzle: [[1, *, *, 2], [*, 1, *, 4], [*, 2, *, *], [*, *, 4, *]]."
+    #user_input = "Please solve this 4x4 Sudoku puzzle: [[1, *, *, 2], [*, 1, *, 4], [*, 2, *, *], [*, *, 4, *]]."
     
+    #user_input = "please solve this 4x4 sudoku puzzle [[3,*,*,2],[1,*,3,*],[*,1,*,3],[4,*,*,1]]."
+
+    # GOOD TEST CASE: even the ChatGPT web cannot solve it
+    user_input = "please solve this 5x5 sudoku puzzle [[*,1,*,*,*],[*,*,3,*,2],[*,*,*,3,*],[*,4,*,1,*],[*,*,1,*,*]]."
+
     #user_input = "Please solve this 9x9 Sudoku puzzle: [[1, *, *, 2, *, *, *, 9, *], [*, *, 5, *, *, 6, *, *, *], [*, 4, *, 1, *, *, *, *, *], [*, *, 3, *, 5, *, *, *, *], [*, *, *, *, 1, 2, *, *, *], [*, *, *, *, *, *, *, *, *], [*, *, *, *, *, *, *, 8, *], [*, *, *, *, *, 8, *, *, *], [*, *, *, *, *, 7, *, *, *]]."
     #user_input = "Please solve this 9x9 Sudoku puzzle: [[4,2,*,9,*,3,8,*,6],[9,1,*,*,8,*,2,*,4],[6,*,3,*,5,*,*,*,9],[*,7,1,*,4,*,6,9,*],[3,*,9,*,2,6,*,8,5],[*,*,*,*,9,*,3,*,*],[*,9,*,*,6,*,4,*,*],[1,*,*,*,*,9,5,*,*],[7,*,4,5,*,8,*,*,*]]."
     #user_input = "Please solve this 3x3 Sudoku puzzle: [[1, *, *], [*, 1, *], [*, 2, *]]."
