@@ -1,4 +1,3 @@
-import numpy as np
 
 class StateManagerBase(object):
 
@@ -30,6 +29,12 @@ class SudokuStateManager(StateManagerBase):
     def get_current_state(self) -> object:
         return self.get_state(0)
     
+    def get_initial_state(self) -> object:
+        history_len = len(self.sudoku_matrix_history)
+        if history_len == 0:
+            return None
+        return self.get_state(history_len-1)
+        
     def get_state(self, rollback_steps) -> object:
         if len(self.sudoku_matrix_history) <= rollback_steps:
             return None

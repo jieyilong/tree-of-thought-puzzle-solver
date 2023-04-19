@@ -19,7 +19,7 @@ class TreeOfThought(object):
             print("Failed to identify the problem type")
             return
         totExecutor = self._get_tot_executor(problem_type)
-        if totExecutor == None:
+        if totExecutor is None:
             print("Problem type not supported yet")
             return
         totExecutor.run(user_input, max_num_rounds)
@@ -67,6 +67,8 @@ class TreeOfThoughtExecutorBase(object):
             temperature = self._get_temperature()
             max_tokens = self._get_max_tokens()
             reply = self.llm_agent.get_reply(messages, temperature, max_tokens)
+            if self._should_repeat(reply):
+                continue
             success, solution = self.parser.parse_llm_reply(reply)
             if not success:
                 print("Failed to extract solution from the reply, will retry")
@@ -76,8 +78,9 @@ class TreeOfThoughtExecutorBase(object):
             rollback_steps = self._get_rollback_steps()
             curr_state_is_valid, messages = self.prompter.generate_prompt(rollback_steps) # FIXME
             if curr_state_is_valid:
-                print("Problem solved! The final solution is {}".format(solution))
-                return
+                # print("Problem solved! The final solution is:\n{}\n".format(solution))
+                # return
+                pass
             else:
                 self.state.rollback(rollback_steps) # backtracking
         print("Sorry, unable to solve the problem within {} rounds of conversations.".format(max_num_rounds))
@@ -90,8 +93,11 @@ class TreeOfThoughtExecutorForSudoku(TreeOfThoughtExecutorBase):
         self.state = SudokuStateManager()
         self.llm_agent = LLMAgent(config)
         self.parser = LLMReplyParserForSudoku()
-        self.prompter = SudokuPrompter(self.llm_agent, PromptGenType.RuleBased)
+        self.prompter = SudokuPrompter(self.llm_agent, self.state, PromptGenType.RuleBased)
 
+    def _should_repeat(self, llm_reply):
+        return "I'm sorry, as an AI language model" in llm_reply # FIXME: make this check more generic
+    
     def _get_temperature(self):
         return consts.DEFAULT_TEMPERATURE
     
@@ -110,6 +116,9 @@ class TreeOfThoughtExecutorForThreeSAT(TreeOfThoughtExecutorBase):
         self.parser = None # FIXME
         self.prompter = None
 
+    def _should_repeat(self, llm_reply):
+        return False
+    
     def _get_temperature(self):
         return consts.DEFAULT_TEMPERATURE
     

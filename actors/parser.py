@@ -33,7 +33,7 @@ class LLMReplyParserForSudoku(LLMReplyParserBase):
             rectified_row = []
             for cell in row:
                 rectified_cell = None
-                if cell == None or str(cell).lower() == "none" or str(cell).lower() == "null":
+                if cell is None or str(cell).lower() == "none" or str(cell).lower() == "null":
                     rectified_cell = "*"
                 else:
                     rectified_cell = str(cell)
