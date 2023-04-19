@@ -13,6 +13,8 @@ class Config:
             self.chatbot_type = ChatbotType.OpenAI
         else:
             self.chatbot_type = ChatbotType.Invalid
+        self.chatbot_max_context_length = configs["chatbot"]["max_context_length"]
+        self.chatbot_include_chat_history_in_query = configs["chatbot"]["include_chat_history_in_query"]
 
         # OpenAI configs
         self.openai_model = configs["openai"]["model"]

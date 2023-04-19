@@ -61,6 +61,7 @@ class TreeOfThought(object):
 class TreeOfThoughtExecutorBase(object):
 
     def __init__(self) -> None:
+        self.conversation_history = ""
         self.state_manager_visit_count_map = {}
 
     def run(self, user_input, max_num_rounds) -> None:
@@ -71,6 +72,8 @@ class TreeOfThoughtExecutorBase(object):
             reply = self.llm_agent.get_reply(messages, temperature, max_tokens)
             self._incr_state_visit_count()
 
+            self.conversation_history += "\nA: {}".format(reply)
+
             if self._should_repeat(reply):
                 continue
             success, solution = self.parser.parse_llm_reply(reply)
@@ -80,7 +83,7 @@ class TreeOfThoughtExecutorBase(object):
             self.state_manager.update_state(solution)
 
             rollback_steps = self._get_rollback_steps()
-            solution_found, curr_state_is_valid, messages = self.prompter.generate_prompt(rollback_steps) # FIXME
+            solution_found, curr_state_is_valid, messages = self.prompter.generate_prompt(self.conversation_history, rollback_steps) # FIXME
             if solution_found:
                 print(messages) # FIXME: better print out
                 return
@@ -116,7 +119,9 @@ class TreeOfThoughtExecutorForSudoku(TreeOfThoughtExecutorBase):
         self.state_manager = SudokuStateManager()
         self.llm_agent = LLMAgent(config)
         self.parser = LLMReplyParserForSudoku()
-        self.prompter = SudokuPrompter(self.llm_agent, self.state_manager, PromptGenType.RuleBased)
+        self.prompter = SudokuPrompter(self.llm_agent, self.state_manager, 
+            config.chatbot_max_context_length, config.chatbot_include_chat_history_in_query,
+            PromptGenType.RuleBased)
 
     def _should_repeat(self, llm_reply):
         return ("{" not in llm_reply) # FIXME: make this check more generic
