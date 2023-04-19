@@ -39,6 +39,10 @@ class LLMReplyParserForSudoku(LLMReplyParserBase):
                     rectified_cell = str(cell)
                 rectified_row.append(rectified_cell)
             rectified_rows.append(rectified_row)
-        solution = np.matrix(rectified_rows)
+        
+        try:
+            solution = np.matrix(rectified_rows)
+        except:
+            return False, None
 
         return True, solution

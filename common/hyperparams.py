@@ -1,4 +1,4 @@
 
 class HyperParams:
-    MaxStateVisitCount = 10
+    MaxStateVisitCount = 30
     MaxNumConversationRounds = 500
