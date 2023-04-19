@@ -16,7 +16,8 @@ class SudokuStateCheckResults:
     def __init__(self) -> None:
         self.rows = []
         self.cols = []
-        self.is_valid = True
+        self.is_valid = False
+        self.solution_found = False
         self.message = ""
 
 
@@ -72,9 +73,9 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         valid_content.append(consts.SUDOKU_UNFILLED_CELLS_PLACEHOLDER)
         for i in range(board_size):
             for j in range(board_size):
-                if not init_board[i, j] in valid_content:
+                if not current_board[i, j] in valid_content:
                     result.is_valid = False
-                    msg_tmpl = """Cell [{}][{}] contains an invalid character. It should be either the string representation of a number between 1 to {}, or '*'"""
+                    msg_tmpl = """Cell [{}][{}] contains an invalid character. It should be either the string representation of a number between 1 to {}, or *"""
                     result.message = msg_tmpl.format(i, j, board_size)
                     return result            
                 if (init_board[i, j] != consts.SUDOKU_UNFILLED_CELLS_PLACEHOLDER and init_board[i, j] != current_board[i, j]):
@@ -87,6 +88,15 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
 
         msg_tmpl = """The current board is valid. The rows are [{}], and the columns are [{}]"""
         result.message = msg_tmpl.format(json.dumps(result.rows), json.dumps(result.cols))
+        result.is_valid = True
+
+        has_unfilled_cells = False
+        for i in range(board_size):
+            for j in range(board_size):
+                if str(current_board[i, j]) == "*":
+                    has_unfilled_cells = True
+        result.solution_found = not has_unfilled_cells
+
         return result
 
     def _has_duplicates(self, vec):

@@ -76,12 +76,12 @@ class TreeOfThoughtExecutorBase(object):
             self.state.update_state(solution)
 
             rollback_steps = self._get_rollback_steps()
-            curr_state_is_valid, messages = self.prompter.generate_prompt(rollback_steps) # FIXME
-            if curr_state_is_valid:
-                # print("Problem solved! The final solution is:\n{}\n".format(solution))
-                # return
-                pass
-            else:
+            solution_found, curr_state_is_valid, messages = self.prompter.generate_prompt(rollback_steps) # FIXME
+            if solution_found:
+                print(messages) # FIXME: better print out
+                return
+            
+            if not curr_state_is_valid:
                 self.state.rollback(rollback_steps) # backtracking
         print("Sorry, unable to solve the problem within {} rounds of conversations.".format(max_num_rounds))
 
@@ -96,7 +96,7 @@ class TreeOfThoughtExecutorForSudoku(TreeOfThoughtExecutorBase):
         self.prompter = SudokuPrompter(self.llm_agent, self.state, PromptGenType.RuleBased)
 
     def _should_repeat(self, llm_reply):
-        return "I'm sorry, as an AI language model" in llm_reply # FIXME: make this check more generic
+        return ("sorry" in llm_reply.lower()) or ("good luck" in llm_reply.lower() or ("{" not in llm_reply)) # FIXME: make this check more generic
     
     def _get_temperature(self):
         return consts.DEFAULT_TEMPERATURE

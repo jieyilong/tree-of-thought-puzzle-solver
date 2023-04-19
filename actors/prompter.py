@@ -32,30 +32,40 @@ class SudokuPrompter(PrompterBase):
     
     def generate_prompt(self, rollback_steps):
         if self.prompt_generation_type == PromptGenType.RuleBased:
-            curr_state_is_valid, msgs = self._generate_prompt_rule_based(rollback_steps)
+            solution_found, curr_state_is_valid, msgs = self._generate_prompt_rule_based(rollback_steps)
         elif self.prompt_generation_type == PromptGenType.NeuralNetworkBased:
-            curr_state_is_valid, msgs = self._generate_prompt_neural_network_based(rollback_steps)
+            solution_found, curr_state_is_valid, msgs = self._generate_prompt_neural_network_based(rollback_steps)
         else:
             raise "Invalid prompt_generation_type"
-        return curr_state_is_valid, msgs
+        return solution_found, curr_state_is_valid, msgs
 
     def _generate_prompt_rule_based(self, rollback_steps):
         self.checker = RuleBasedSudokuStateChecker(self.state_manager)
         state_check_result = self.checker.check_current_state()
-
-        if state_check_result.is_valid:
+        solution_found = False
+        if state_check_result.solution_found:
+            msg_tmpl = """Fantastic! You have found the solution {}!"""
+            role, msg_content = None, msg_tmpl.format(json.dumps(state_check_result.rows))
+            solution_found, curr_state_is_valid = True, True
+        elif state_check_result.is_valid:
             # msg_tmpl = "Great job! The current Sudoku board is valid. The rows are {}, and the columns are {}. Please continue to fill in missing the elements following the Sudoku rules."
             # role, msg_content = "user", msg_tmpl.format(state_check_result.rows, state_check_result.cols)
+            
+            #msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {} step by step. Please return your solution in the following JSON format: {{ "rows": [] }}"""
             msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {} step by step. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+
             role, msg_content = "user", msg_tmpl.format(json.dumps(state_check_result.rows))
-            curr_state_is_valid = True
+            solution_found, curr_state_is_valid = False, True
         else:
-            msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            #msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            #msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy. For example, look at one row or column at a time. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy, and solve it step by step. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+
             role, msg_content = "user", msg_tmpl.format(json.dumps(self.state_manager.get_current_state().tolist()), 
                                                         state_check_result.message, json.dumps(self.state_manager.get_state(rollback_steps).tolist()))
-            curr_state_is_valid = False
+            solution_found, curr_state_is_valid = False, False
         msgs = self.llm_agent.compose_messages([role], [msg_content])
-        return curr_state_is_valid, msgs
+        return solution_found, curr_state_is_valid, msgs
         
     def _generate_prompt_neural_network_based(self, rollback_steps):
         self.checker = LLMBasedSudokuStateChecker(self.state_manager)
