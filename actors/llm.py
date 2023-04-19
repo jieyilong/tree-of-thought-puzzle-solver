@@ -42,15 +42,18 @@ class OpenAIChatbot(ChatbotBase):
 
     def get_reply(self, messages, temperature = None, max_tokens = None) -> str:
         print("LLM Query:", messages)
-        response = openai.ChatCompletion.create(
-            model = self.model,
-            messages = messages,
-            temperature = temperature,
-            max_tokens = max_tokens
-        )
-        reply = response.choices[0].message["content"]
-        print("LLM Reply:", reply)
-        print("")
-
-        return reply
-
+        try:
+            response = openai.ChatCompletion.create(
+                model = self.model,
+                messages = messages,
+                temperature = temperature,
+                max_tokens = max_tokens
+            )
+            reply = response.choices[0].message["content"]
+            print("LLM Reply:", reply)
+            print("")
+            return reply
+        except:
+            reply = "Failed to get LLM reply"
+            print(reply)
+            return reply

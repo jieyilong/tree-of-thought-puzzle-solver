@@ -1,3 +1,4 @@
+from common.hyperparams import HyperParams
 from common.config import Config
 from tot.tot import TreeOfThought
 
@@ -9,7 +10,9 @@ if __name__ == "__main__":
     # Solution: [[1, 4, 3, 2], [3, 1, 2, 4], [4, 2, 1, 3], [2, 3, 4, 1]]
     user_input = "Please solve this 4x4 Sudoku puzzle: [[1, *, *, 2], [*, 1, *, 4], [*, 2, *, *], [*, *, 4, *]]."
     
+    #user_input = "Please solve this 9x9 Sudoku puzzle: [[1, *, *, 2, *, *, *, 9, *], [*, *, 5, *, *, 6, *, *, *], [*, 4, *, 1, *, *, *, *, *], [*, *, 3, *, 5, *, *, *, *], [*, *, *, *, 1, 2, *, *, *], [*, *, *, *, *, *, *, *, *], [*, *, *, *, *, *, *, 8, *], [*, *, *, *, *, 8, *, *, *], [*, *, *, *, *, 7, *, *, *]]."
+
     #user_input = "Please solve this 3x3 Sudoku puzzle: [[1, *, *], [*, 1, *], [*, 2, *]]."
     
-    max_num_rounds = 20
+    max_num_rounds = HyperParams.MaxNumConversationRounds
     tot.run(user_input, max_num_rounds)
