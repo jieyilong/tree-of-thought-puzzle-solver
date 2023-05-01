@@ -1,4 +1,4 @@
-# Tree of Thought Demo
+# Tree of Thought Puzzle Solver Demo
 
 
 ## Setup
