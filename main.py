@@ -15,9 +15,10 @@ if __name__ == "__main__":
     # GOOD TEST CASE: even the ChatGPT web cannot solve these
     #user_input = "please solve this 5x5 sudoku puzzle [[*,1,*,*,*],[*,*,3,*,2],[*,*,*,3,*],[*,4,*,1,*],[*,*,1,*,*]] where * meaning an empty cell to be filled in."
    
-    # GOOD TEST CASE: Each row/column of this puzzle has 2-3 unknowns, which seems to be a sweetspot for ToT vs. ChatGPT
-    user_input = "please solve this 5x5 sudoku puzzle [[*,1,*,5,4],[1,*,3,*,2],[5,2,*,3,*],[*,4,*,1,*],[4,*,1,*,5]] where * meaning an empty cell to be filled in."
-    
+    # GOOD TEST CASE: Each row/column of this puzzle has 3-4 unknowns, which seems to be a sweetspot for ToT vs. ChatGPT
+    #user_input = "please solve this 5x5 sudoku puzzle [[*,1,*,5,4],[1,*,3,*,2],[5,2,*,3,*],[*,4,*,1,*],[4,*,1,*,5]] where * meaning an empty cell to be filled in."
+    user_input = "please solve this 5x5 sudoku puzzle [[*,2,*,*,4],[*,*,3,*,1],[*,1,*,3,*],[*,4,*,2,*],[*,*,2,*,*]] where * meaning an empty cell to be filled in."
+
     #user_input = "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]]."
     #user_input = "please solve this 4x4 sudoku puzzle [[2,1,*,*],[*,*,3,*],[*,*,*,4],[4,*,*,*]], where * meaning an empty cell to be filled in."
     

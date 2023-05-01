@@ -68,7 +68,7 @@ class SudokuPrompter(PrompterBase):
             # role, msg_content = "user", msg_tmpl.format(state_check_result.rows, state_check_result.cols)
             
             #msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {} step by step. Please return your solution in the following JSON format: {{ "rows": [] }}"""
-            new_msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {}. {}. In the next solution you return, please just fill in one cell since we will work together to solve the puzzle in multiple rounds of conversation. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            new_msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {}. {}. In the next solution you return, please just fill in a few cells since we will work together to solve the puzzle in multiple rounds of conversation. Please return your solution in the following JSON format: {{ "rows": [] }}"""
             role, new_msg_content = "user", new_msg_tmpl.format(json.dumps(state_check_result.rows), strategy_chosen)
             solution_found, curr_state_is_valid = False, True
         else:
@@ -80,7 +80,7 @@ class SudokuPrompter(PrompterBase):
             # good prompt 1
             #msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy. For example, apply the "only possibility" rule, and fill in the obvious cell first. Please make sure just fill in one cell at a time. We do NOT expect you to solve the problem in a single shot. You can return intermediate solutions with unfilled cells marked by "*". Please return your solution in the following JSON format: {{ "rows": [] }}"""
 
-            new_msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy. {}. In the next solution you return, please just fill in one cell since we will work together to solve the puzzle in multiple rounds of conversation. We do NOT expect you to solve the problem in a single shot. You can return intermediate solutions with unfilled cells marked by "*". Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            new_msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy. {}. In the next solution you return, please just fill in a few cells since we will work together to solve the puzzle in multiple rounds of conversation. We do NOT expect you to solve the problem in a single shot. You can return intermediate solutions with unfilled cells marked by "*". Please return your solution in the following JSON format: {{ "rows": [] }}"""
             role, new_msg_content = "user", new_msg_tmpl.format(json.dumps(self.state_manager.get_current_state().tolist()), 
                 state_check_result.message, json.dumps(self.state_manager.get_state(rollback_steps).tolist()), strategy_chosen)
             solution_found, curr_state_is_valid = False, False
