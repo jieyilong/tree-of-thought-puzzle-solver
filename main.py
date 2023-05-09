@@ -1,11 +1,23 @@
+import sys
 from common.hyperparams import HyperParams
 from common.config import Config
 from tot.tot import TreeOfThought
 
 if __name__ == "__main__":
+    if not len(sys.argv) == 2:
+        print("""Usage:""")
+        print("""    python main.py "<problem_description>" """)
+        print("""Example:""")
+        print("""    python main.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]] where * represents a cell to be filled in." """)
+        exit(1)
+    
+    user_input = sys.argv[1]
     path_to_config_yaml = "./config.yaml"
     config = Config(path_to_config_yaml)
     tot = TreeOfThought(config)
+
+    max_num_rounds = HyperParams.MaxNumConversationRounds
+    tot.run(user_input, max_num_rounds)
 
     # Solution: [[1, 4, 3, 2], [3, 1, 2, 4], [4, 2, 1, 3], [2, 3, 4, 1]]
     #user_input = "Please solve this 4x4 Sudoku puzzle: [[1, *, *, 2], [*, 1, *, 4], [*, 2, *, *], [*, *, 4, *]]."
@@ -17,7 +29,7 @@ if __name__ == "__main__":
    
     # GOOD TEST CASE: Each row/column of this puzzle has 3-4 unknowns, which seems to be a sweetspot for ToT vs. ChatGPT
     #user_input = "please solve this 5x5 sudoku puzzle [[*,1,*,5,4],[1,*,3,*,2],[5,2,*,3,*],[*,4,*,1,*],[4,*,1,*,5]] where * meaning an empty cell to be filled in."
-    user_input = "please solve this 5x5 sudoku puzzle [[*,2,*,*,4],[*,*,3,*,1],[*,1,*,3,*],[*,4,*,2,*],[*,*,2,*,*]] where * meaning an empty cell to be filled in."
+    # user_input = "please solve this 5x5 sudoku puzzle [[*,2,*,*,4],[*,*,3,*,1],[*,1,*,3,*],[*,4,*,2,*],[*,*,2,*,*]] where * meaning an empty cell to be filled in."
 
     #user_input = "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]]."
     #user_input = "please solve this 4x4 sudoku puzzle [[2,1,*,*],[*,*,3,*],[*,*,*,4],[4,*,*,*]], where * meaning an empty cell to be filled in."
@@ -26,5 +38,3 @@ if __name__ == "__main__":
     #user_input = "Please solve this 9x9 Sudoku puzzle: [[4,2,*,9,*,3,8,*,6],[9,1,*,*,8,*,2,*,4],[6,*,3,*,5,*,*,*,9],[*,7,1,*,4,*,6,9,*],[3,*,9,*,2,6,*,8,5],[*,*,*,*,9,*,3,*,*],[*,9,*,*,6,*,4,*,*],[1,*,*,*,*,9,5,*,*],[7,*,4,5,*,8,*,*,*]]."
     #user_input = "Please solve this 3x3 Sudoku puzzle: [[1, *, *], [*, 1, *], [*, 2, *]]."
     
-    max_num_rounds = HyperParams.MaxNumConversationRounds
-    tot.run(user_input, max_num_rounds)
