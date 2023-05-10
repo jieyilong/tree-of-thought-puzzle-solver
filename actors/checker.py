@@ -34,7 +34,7 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         if current_board is None:
             raise "The current board is invalid"
         
-        return self.check_sudoku_board(init_board, current_board)
+        return RuleBasedSudokuStateChecker.check_sudoku_board(init_board, current_board)
     
     def check_sudoku_board(init_board, current_board):
         result = SudokuStateCheckResults()
