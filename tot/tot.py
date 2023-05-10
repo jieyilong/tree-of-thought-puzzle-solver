@@ -1,7 +1,6 @@
 import json
 import common.consts as consts
 import common.utils as utils
-from common.hyperparams import HyperParams
 from common.enums import *
 from common.hyperparams import HyperParams
 from actors.state import SudokuStateManager
@@ -16,7 +15,8 @@ class TreeOfThought(object):
         self.config = config
         self.llm_agent = LLMAgent(config)
 
-    def run(self, user_input, max_num_rounds) -> None:
+    def run(self, user_input) -> None:
+        max_num_rounds = HyperParams.MaxNumConversationRounds
         success, problem_type = self._extract_problem_type(user_input)
         if not success:
             print("Failed to identify the problem type")

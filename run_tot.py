@@ -1,14 +1,13 @@
 import sys
-from common.hyperparams import HyperParams
 from common.config import Config
 from tot.tot import TreeOfThought
 
 if __name__ == "__main__":
     if not len(sys.argv) == 2:
         print("""Usage:""")
-        print("""    python main.py "<problem_description>" """)
+        print("""    python run_tot.py "<problem_description>" """)
         print("""Example:""")
-        print("""    python main.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]] where * represents a cell to be filled in." """)
+        print("""    python run_tot.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]] where * represents a cell to be filled in." """)
         exit(1)
     
     user_input = sys.argv[1]
@@ -16,8 +15,7 @@ if __name__ == "__main__":
     config = Config(path_to_config_yaml)
     tot = TreeOfThought(config)
 
-    max_num_rounds = HyperParams.MaxNumConversationRounds
-    tot.run(user_input, max_num_rounds)
+    tot.run(user_input)
 
     # Solution: [[1, 4, 3, 2], [3, 1, 2, 4], [4, 2, 1, 3], [2, 3, 4, 1]]
     #user_input = "Please solve this 4x4 Sudoku puzzle: [[1, *, *, 2], [*, 1, *, 4], [*, 2, *, *], [*, *, 4, *]]."

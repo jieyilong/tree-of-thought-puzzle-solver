@@ -21,11 +21,22 @@ openai:
     api_key: <your_open_ai_api_key>
 ```
 
-## Run
+## Run ToT
 
 ```shell
-python main.py "<problem_description>"
+python run_tot.py "<problem_description>"
 
 # Example
-python main.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]] where * represents a cell to be filled in."
+python run_tot.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]] where * represents a cell to be filled in."
+```
+
+## Run Experiments
+
+```shell
+# solver_type: zero_shot, one_shot_with_cot, few_shot_with_cot, tot
+python run_expr.py <solver_type> <path/to/problem/set/json>
+
+# Example
+python run_expr.py one_shot_with_cot data/benchmarks/sudoku/3x3_sudoku_puzzles.json
+python run_expr.py tot data/benchmarks/sudoku/3x3_sudoku_puzzles.json
 ```

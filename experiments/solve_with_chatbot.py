@@ -17,7 +17,8 @@ class ChatBotBasedSudokuSolver(object):
 
     # sudoku_puzzle_instance_str should have the following format:
     #     [[*, 3, 1], [*, 2, 3], [3, *, 2]]
-    def solve(self, sudoku_puzzle_instance_str):
+    def run(self, sudoku_puzzle_instance_str):
+        sudoku_puzzle_instance_str = self._rectify_sudoku_puzzle_instance_str(sudoku_puzzle_instance_str)
         prompt = self.generate_prompt(sudoku_puzzle_instance_str)
         llm_reply = self.llm_agent.get_reply(prompt)
 
@@ -36,6 +37,14 @@ class ChatBotBasedSudokuSolver(object):
         result = RuleBasedSudokuStateChecker.check_sudoku_board(init_board, solution)
 
         return result.is_valid, result.rows
+    
+    def _rectify_sudoku_puzzle_instance_str(self, sudoku_puzzle_instance_str):
+        sudoku_puzzle_instance_str = sudoku_puzzle_instance_str.replace("'", "")
+        sudoku_puzzle_instance_str = sudoku_puzzle_instance_str.replace('"', '')
+        cell_allowed = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*']
+        for cell in cell_allowed:
+            sudoku_puzzle_instance_str = sudoku_puzzle_instance_str.replace(cell, '"' + cell + '"')
+        return sudoku_puzzle_instance_str
         
 
 class ZeroShotSudokuSolver(ChatBotBasedSudokuSolver):
