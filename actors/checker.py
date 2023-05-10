@@ -33,7 +33,10 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         current_board = self.state_manager.get_current_state()
         if current_board is None:
             raise "The current board is invalid"
-
+        
+        return self.check_sudoku_board(init_board, current_board)
+    
+    def check_sudoku_board(init_board, current_board):
         result = SudokuStateCheckResults()
         for row in current_board:
             result.rows.append(row.tolist()[0])
@@ -52,7 +55,7 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         # Check constraint 2: the board must be filled with numbers from 1-n with no repeated numbers in each line, horizontally or vertically.
         for i in range(len(result.rows)):
             row = result.rows[i]
-            has_duplicates, duplicated_elem = self._has_duplicates(row)
+            has_duplicates, duplicated_elem = RuleBasedSudokuStateChecker._has_duplicates(row)
             if has_duplicates:
                 result.is_valid = False
                 msg_tmpl = """Row {} is invalid, it contains two {}s."""
@@ -61,7 +64,7 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
         
         for j in range(len(result.cols)):
             col = result.cols[j]
-            has_duplicates, duplicated_elem = self._has_duplicates(col)
+            has_duplicates, duplicated_elem = RuleBasedSudokuStateChecker._has_duplicates(col)
             if has_duplicates:
                 result.is_valid = False
                 msg_tmpl = """Column {} is invalid, it contains two {}s."""
@@ -99,7 +102,7 @@ class RuleBasedSudokuStateChecker(StateCheckerBase):
 
         return result
 
-    def _has_duplicates(self, vec):
+    def _has_duplicates(vec):
         if len(vec) <= 1:
             return False
         v = copy.deepcopy(vec)

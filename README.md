@@ -24,5 +24,8 @@ openai:
 ## Run
 
 ```shell
-python main.py
+python main.py "<problem_description>"
+
+# Example
+python main.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*,*,4],[1,*,*,*]] where * represents a cell to be filled in."
 ```

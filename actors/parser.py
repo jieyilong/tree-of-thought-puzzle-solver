@@ -18,14 +18,15 @@ class LLMReplyParserForSudoku(LLMReplyParserBase):
 
     def parse_llm_reply(self, llm_reply):
         success, json_obj = utils.extract_json_from_text_string(llm_reply)
-
         if not success:
             return False, None
-        
-        if not (consts.KEY_ROWS in json_obj):
+        return self.extract_sudoku_board(json_obj)
+
+    def extract_sudoku_board(self, sudoku_board_json_obj):
+        if not (consts.KEY_ROWS in sudoku_board_json_obj):
             return False, None
         
-        rows = json_obj[consts.KEY_ROWS]
+        rows = sudoku_board_json_obj[consts.KEY_ROWS]
         
         # rectify the cells
         rectified_rows = []
@@ -39,10 +40,10 @@ class LLMReplyParserForSudoku(LLMReplyParserBase):
                     rectified_cell = str(cell)
                 rectified_row.append(rectified_cell)
             rectified_rows.append(rectified_row)
-        
+                
         try:
             solution = np.matrix(rectified_rows)
         except:
             return False, None
-
+        
         return True, solution

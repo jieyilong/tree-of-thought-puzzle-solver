@@ -3,6 +3,7 @@ import common.consts as consts
 import common.utils as utils
 from common.hyperparams import HyperParams
 from common.enums import *
+from common.hyperparams import HyperParams
 from actors.state import SudokuStateManager
 from actors.llm import LLMAgent
 from actors.parser import LLMReplyParserForSudoku
@@ -28,8 +29,8 @@ class TreeOfThought(object):
 
     def _extract_problem_type(self, user_input):
         messages = self._generate_problem_type_query(user_input)
-        temperature = consts.DEFAULT_TEMPERATURE
-        max_tokens = consts.DEFAULT_MAX_TOKENS
+        temperature = HyperParams.DefaultTemperature
+        max_tokens = HyperParams.DefaultMaxTokens
         reply = self.llm_agent.get_reply(messages, temperature, max_tokens)
         success, json_obj = utils.extract_json_from_text_string(reply)
         if not success:
@@ -127,10 +128,10 @@ class TreeOfThoughtExecutorForSudoku(TreeOfThoughtExecutorBase):
         return ("{" not in llm_reply) # FIXME: make this check more generic
     
     def _get_temperature(self):
-        return consts.DEFAULT_TEMPERATURE
+        return HyperParams.DefaultTemperature
     
     def _get_max_tokens(self):
-        return consts.DEFAULT_MAX_TOKENS
+        return HyperParams.DefaultMaxTokens
     
     def _get_rollback_steps(self):
         max_rollback_steps = self.state_manager.max_rollback_steps()
@@ -166,10 +167,10 @@ class TreeOfThoughtExecutorForThreeSAT(TreeOfThoughtExecutorBase):
         return False
     
     def _get_temperature(self):
-        return consts.DEFAULT_TEMPERATURE
+        return HyperParams.DefaultTemperature
     
     def _get_max_tokens(self):
-        return consts.DEFAULT_MAX_TOKENS
+        return HyperParams.DefaultMaxTokens
     
     def _get_rollback_steps(self):
         return 1
