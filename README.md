@@ -3,13 +3,16 @@
 
 ## Setup
 
-Install the required dependencies (Python 3.9+ required):
+Clone this repo and install the required dependencies (Python 3.9+ required):
 
 ```shell
+git clone https://github.com/jieyilong/tree-of-thought-puzzle-solver
+cd tree-of-thought-puzzle-solver
 pip install -r requirements.txt
+touch config.yaml
 ```
 
-Create an empty YAML file `config.yaml` under the current directory, and paste in the following content. Then, please set your choice of model (e.g. "gpt-3.5-turbo") and your OpenAI API Key:
+Edit the YAML file `config.yaml`, paste in the following content and save. Then, please set your choice of model (e.g. "gpt-3.5-turbo") and your OpenAI API Key:
 
 ```yaml
 chatbot:

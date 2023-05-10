@@ -36,12 +36,12 @@ class SudokuPrompter(PrompterBase):
     
     def generate_prompt(self, conversation_history, rollback_steps):
         if self.prompt_generation_type == PromptGenType.RuleBased:
-            solution_found, curr_state_is_valid, msgs = self._generate_prompt_rule_based(conversation_history, rollback_steps)
+            solution_found, solution, curr_state_is_valid, msgs = self._generate_prompt_rule_based(conversation_history, rollback_steps)
         elif self.prompt_generation_type == PromptGenType.NeuralNetworkBased:
-            solution_found, curr_state_is_valid, msgs = self._generate_prompt_neural_network_based(conversation_history, rollback_steps)
+            solution_found, solution, curr_state_is_valid, msgs = self._generate_prompt_neural_network_based(conversation_history, rollback_steps)
         else:
             raise "Invalid prompt_generation_type"
-        return solution_found, curr_state_is_valid, msgs
+        return solution_found, solution, curr_state_is_valid, msgs
 
     def _generate_prompt_rule_based(self, conversation_history, rollback_steps):
         self.checker = RuleBasedSudokuStateChecker(self.state_manager)
@@ -90,9 +90,10 @@ class SudokuPrompter(PrompterBase):
             msgs = self.llm_agent.compose_messages([role], [conversation_history[-self.max_llm_context_length:]])
         else:
             msgs = self.llm_agent.compose_messages([role], [new_msg_content])
-        return solution_found, curr_state_is_valid, msgs
+        solution = state_check_result.rows
+        return solution_found, solution, curr_state_is_valid, msgs
         
     def _generate_prompt_neural_network_based(self, rollback_steps):
         self.checker = LLMBasedSudokuStateChecker(self.state_manager)
         state_check_result = self.checker.check_current_state()
-        return False, None # FIXME
+        return False, None, False, None # FIXME

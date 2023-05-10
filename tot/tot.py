@@ -15,17 +15,18 @@ class TreeOfThought(object):
         self.config = config
         self.llm_agent = LLMAgent(config)
 
-    def run(self, user_input) -> None:
+    def run(self, user_input):
         max_num_rounds = HyperParams.MaxNumConversationRounds
         success, problem_type = self._extract_problem_type(user_input)
         if not success:
             print("Failed to identify the problem type")
-            return
+            return False, None
         totExecutor = self._get_tot_executor(problem_type)
         if totExecutor is None:
             print("Problem type not supported yet")
-            return
-        totExecutor.run(user_input, max_num_rounds)
+            return False, None
+        success, solution = totExecutor.run(user_input, max_num_rounds)
+        return success, solution
 
     def _extract_problem_type(self, user_input):
         messages = self._generate_problem_type_query(user_input)
@@ -65,7 +66,7 @@ class TreeOfThoughtExecutorBase(object):
         self.conversation_history = ""
         self.state_manager_visit_count_map = {}
 
-    def run(self, user_input, max_num_rounds) -> None:
+    def run(self, user_input, max_num_rounds):
         messages = self.prompter.generate_initial_prompt(user_input)
         for i in range(max_num_rounds):
             temperature = self._get_temperature()
@@ -84,15 +85,16 @@ class TreeOfThoughtExecutorBase(object):
             self.state_manager.update_state(solution)
 
             rollback_steps = self._get_rollback_steps()
-            solution_found, curr_state_is_valid, messages = self.prompter.generate_prompt(self.conversation_history, rollback_steps) # FIXME
+            solution_found, solution, curr_state_is_valid, messages = self.prompter.generate_prompt(self.conversation_history, rollback_steps) # FIXME
             if solution_found:
                 print(messages) # FIXME: better print out
-                return
+                return True, solution
             
             if not curr_state_is_valid:
                 self.state_manager.rollback(rollback_steps) # backtracking
 
         print("Sorry, unable to solve the problem within {} rounds of conversations.".format(max_num_rounds))
+        return False, None
 
     def _incr_state_visit_count(self):
         if self.state_manager.get_current_state() is None:

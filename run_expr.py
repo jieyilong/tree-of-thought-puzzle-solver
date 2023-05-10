@@ -12,11 +12,7 @@ def load_problem_set(path_to_problem_set_json_file):
     problem_set = json.load(f)
     return problem_set
 
-#
-# Example Sudoku problems:
-# '[[*, 3, 1], [*, 2, 3], [3, *, 2]]'
-# '[[1, *, *, 2], [*, 1, *, 4], [*, 2, *, *], [*, *, 4, *]]'
-#
+
 if __name__ == "__main__":
     if not len(sys.argv) == 3:
         print("""Usage:""")
@@ -45,7 +41,7 @@ if __name__ == "__main__":
             solver = FewShotCotSudokuSolver(llm_agent)
             problem_description = problem
         elif solver_type == SolverType.ToT:
-            solver =  TreeOfThought(config)
+            solver = TreeOfThought(config)
             problem_description = "Please solve this Sudoku puzzle: {}".format(problem)
         else:
             raise "Solver type {} not supported yet.".format(solver_type)
