@@ -40,6 +40,8 @@ python run_tot.py "please solve this 4x4 sudoku puzzle [[*,1,*,*],[*,*,2,*],[*,*
 python run_expr.py <solver_type> <path/to/problem/set/json>
 
 # Example
+python run_expr.py zero_shot data/benchmarks/sudoku/3x3_sudoku_puzzles.json
 python run_expr.py one_shot_with_cot data/benchmarks/sudoku/3x3_sudoku_puzzles.json
+python run_expr.py few_shot_with_cot data/benchmarks/sudoku/3x3_sudoku_puzzles.json
 python run_expr.py tot data/benchmarks/sudoku/3x3_sudoku_puzzles.json
 ```

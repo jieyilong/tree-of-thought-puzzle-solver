@@ -48,13 +48,20 @@ class SudokuPrompter(PrompterBase):
         state_check_result = self.checker.check_current_state()
         solution_found = False
         strategies = [
-            """For example, apply the "only possibility" rule, and fill in the obvious cell first""",
-            """For example, look at the row or column with the least number of unfilled cells first""",
-            """For example, try the Pencil Marks technique""",
-            """For example, look for intersections where a digit can only be placed in one cell of a row or column. This can eliminate possible digits for other cells in that row or column""",
-            """For example, look for rows, columns or subgrids that contain only one empty cell where only one digit can be placed in that empty cell""",
-            """For example, look for groups of cells that contain only two, three, or four possible digits. If these cells are in the same row, column, or subgrid, then you can eliminate those digits from other cells in that row, column, or subgrid""",
-            """For example, look for rows or columns where a particular digit can only be placed in two or three cells. If those cells form an X-Wing or Swordfish pattern, then you can eliminate that digit from other cells in those rows or columns"""
+            #"""For example, apply the "only possibility" rule, and fill in the obvious cell first""",
+            #"""For example, look at the row or column with the least number of unfilled cells first""",
+            #"""For example, try the Pencil Marks technique""",
+            #"""For example, look for intersections where a digit can only be placed in one cell of a row or column. This can eliminate possible digits for other cells in that row or column""",
+            #"""For example, look for rows, columns or subgrids that contain only one empty cell where only one digit can be placed in that empty cell""",
+            #"""For example, look for groups of cells that contain only two, three, or four possible digits. If these cells are in the same row, column, or subgrid, then you can eliminate those digits from other cells in that row, column, or subgrid""",
+            #"""For example, look for rows or columns where a particular digit can only be placed in two or three cells. If those cells form an X-Wing or Swordfish pattern, then you can eliminate that digit from other cells in those rows or columns"""
+            """Here is an example showing how to solve a 3x3 Sudoku puzzle [[*, 3, 1], [*, 2, 3], [3, *, 2]]. First, notice that the only missing number in the first row is 2, so we can fill in the first cell in the first row with 2.\n\n"""  + \
+                   """Similarly, the first cell in the second row should be 2. Finally, the only missing number in the second column is 1. Hence, we can fill that cell with 1.""" + \
+                   """In conclusion, the puzzle solution is [[2, 3, 1], [1, 2, 3], [3, 1, 2]].\n\n""",
+            """Here is another example showing how to solve Sudoku puzzle [[1, *, *], [*, 1, *], [*, 2, *]]. First, notice that the second column already has 1 and 2, so the first cell in the second row needs to be 3.""" + \
+                   """After this step, the first row has 1 and 3. Hence the last cell in the first row must be 2. Now, look at the cell at the intersection of the second row and the third column. It must be 3.""" + \
+                   """As a result, the cell at the intersection of the third row and the third column must be 1. The remaining cells are now easy to fill in.""" + \
+                   """In conclusion, the puzzle solution is [[1, 3, 2], [2, 1, 3], [3, 2, 1]].\n\n"""
         ]
         strategy_choice = random.randint(0, len(strategies)-1)
         strategy_chosen = strategies[strategy_choice]
@@ -68,8 +75,8 @@ class SudokuPrompter(PrompterBase):
             # role, msg_content = "user", msg_tmpl.format(state_check_result.rows, state_check_result.cols)
             
             #msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {} step by step. Please return your solution in the following JSON format: {{ "rows": [] }}"""
-            new_msg_tmpl = """Great job! You are the best Sudoku solver in the world. Please try to solve this Sudoku puzzle {}. {}. In the next solution you return, please just fill in a few cells since we will work together to solve the puzzle in multiple rounds of conversation. Please return your solution in the following JSON format: {{ "rows": [] }}"""
-            role, new_msg_content = "user", new_msg_tmpl.format(json.dumps(state_check_result.rows), strategy_chosen)
+            new_msg_tmpl = """{} Please try to solve this Sudoku puzzle {}. In the next solution you return, please just fill in a few cells since we will work together to solve the puzzle in multiple rounds of conversation. Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            role, new_msg_content = "user", new_msg_tmpl.format(json.dumps(strategy_chosen), state_check_result.rows)
             solution_found, curr_state_is_valid = False, True
         else:
             #msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Please return your solution in the following JSON format: {{ "rows": [] }}"""
@@ -80,9 +87,9 @@ class SudokuPrompter(PrompterBase):
             # good prompt 1
             #msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy. For example, apply the "only possibility" rule, and fill in the obvious cell first. Please make sure just fill in one cell at a time. We do NOT expect you to solve the problem in a single shot. You can return intermediate solutions with unfilled cells marked by "*". Please return your solution in the following JSON format: {{ "rows": [] }}"""
 
-            new_msg_tmpl = """Unfortunately there is an error in your current solution {}. {} Let us try again starting from this Sudoku board: {}. Maybe try a different strategy. {}. In the next solution you return, please just fill in a few cells since we will work together to solve the puzzle in multiple rounds of conversation. We do NOT expect you to solve the problem in a single shot. You can return intermediate solutions with unfilled cells marked by "*". Please return your solution in the following JSON format: {{ "rows": [] }}"""
+            new_msg_tmpl = """Unfortunately there is an error in your current solution {}. {} {} Let us try again starting from this Sudoku board: {}. In the next solution you return, please just fill in a few cells since we will work together to solve the puzzle in multiple rounds of conversation. We do NOT expect you to solve the problem in a single shot. You can return intermediate solutions with unfilled cells marked by "*". Please return your solution in the following JSON format: {{ "rows": [] }}"""
             role, new_msg_content = "user", new_msg_tmpl.format(json.dumps(self.state_manager.get_current_state().tolist()), 
-                state_check_result.message, json.dumps(self.state_manager.get_state(rollback_steps).tolist()), strategy_chosen)
+                state_check_result.message, strategy_chosen, json.dumps(self.state_manager.get_state(rollback_steps).tolist()))
             solution_found, curr_state_is_valid = False, False
 
         conversation_history += "\nQ: {}".format(new_msg_content)
