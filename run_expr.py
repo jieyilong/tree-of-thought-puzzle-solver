@@ -4,7 +4,7 @@ from common.config import Config
 from common.hyperparams import HyperParams
 from common.enums import SolverType
 from actors.llm import LLMAgent
-from experiments.solve_with_chatbot import *
+from experiments.chatbot_based_solvers import *
 from tot.tot import TreeOfThought
 
 def load_problem_set(path_to_problem_set_json_file):
@@ -30,7 +30,11 @@ if __name__ == "__main__":
     config = Config(path_to_config_yaml)
     llm_agent = LLMAgent(config)
 
+    num_problems = len(problem_set)
+    num_solved_problems = 0
     for problem in problem_set:
+        print("---------------------------------------------------------------------------")
+
         if solver_type == SolverType.ZeroShot:
             solver = ZeroShotSudokuSolver(llm_agent)
             problem_description = problem
@@ -47,8 +51,14 @@ if __name__ == "__main__":
             raise "Solver type {} not supported yet.".format(solver_type)
         
         success, solution = solver.run(problem_description)
+        if success:
+            num_solved_problems += 1
 
         print("Success :", success)
         print("Solution:", solution)
+        print("---------------------------------------------------------------------------")
         print("")
+    
+    print("Total number of  problems:", num_problems)
+    print("Number of solved problems:", num_solved_problems)
 
