@@ -1,5 +1,8 @@
 # Tree of Thought Puzzle Solver Demo
 
+This repo implements a Sudoku puzzle solver based on our proposed Tree-of-Thought (ToT) framework, a novel approach aimed at improving the problem-solving capabilities of auto-regressive large language models (LLMs). The ToT technique is inspired by the human mind’s approach for solving complex reasoning tasks through trial and error. In this process, the human mind explores the solution space through a tree-like thought process, allowing for backtracking when necessary. To implement ToT as a software system, we augment an LLM with additional modules including a prompter agent, a checker module, a memory module, and a ToT controller. In order to solve a given problem, these modules engage in a multi-round conversation with the LLM. Unlike an auto-regressive LLM which generates a new token based on the preceding sequence of tokens without backward editing, the ToT framework allows the sytem to backtrack to the previous steps of the thought-process and explore other directions from there. For more details, please check out the following link:
+
+https://arxiv.org/pdf/2305.08291.pdf
 
 ## Setup
 
